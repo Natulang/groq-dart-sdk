@@ -104,6 +104,21 @@ class Groq {
     );
   }
 
+  Future<(GroqAudioResponse, GroqRateLimitInformation)> transcribeAudioBytes({
+    required List<int> bytes,
+    required String modelId,
+    String? customApiKey,
+    Map<String, String> optionalParameters = const {},
+  }) async {
+    final specificApiKey = customApiKey ?? apiKey;
+    return await GroqApi.transcribeAudioBytes(
+      bytes: bytes,
+      modelId: modelId,
+      apiKey: specificApiKey,
+      optionalParameters: optionalParameters,
+    );
+  }
+
   ///Translates the audio file at the given `audioFileUrl` to ENGLISH, max 25Mb \
   ///It uses the model with the given `modelId` \
   ///`customApiKey` is the API key to use for the translation, defaults to the Groq instance API key \

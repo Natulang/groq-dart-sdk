@@ -111,12 +111,36 @@ class GroqApi {
     required String modelId,
     required Map<String, String> optionalParameters,
   }) async {
+    return await _transcribeAudio(
+        apiKey,
+        await http.MultipartFile.fromPath('file', filePath),
+        modelId,
+        optionalParameters);
+  }
+
+  ///transcribes the audio file at the given path using the model with the given model id
+  static Future<(GroqAudioResponse, GroqRateLimitInformation)>
+      transcribeAudioBytes({
+    required String apiKey,
+    required List<int> bytes,
+    required String modelId,
+    required Map<String, String> optionalParameters,
+  }) async {
+    return await _transcribeAudio(
+        apiKey,
+        http.MultipartFile.fromBytes('file', bytes, filename: 'audio.wav'),
+        modelId,
+        optionalParameters);
+  }
+
+  static _transcribeAudio(String apiKey, http.MultipartFile file,
+      String modelId, Map<String, String> optionalParameters) async {
     final request =
         http.MultipartRequest('POST', Uri.parse(_getAudioTranscriptionUrl));
 
     request.headers['Authorization'] = 'Bearer $apiKey';
     request.headers['Content-Type'] = 'multipart/form-data';
-    request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    request.files.add(file);
     request.fields['model'] = modelId;
 
     // Add optional fields from the map
